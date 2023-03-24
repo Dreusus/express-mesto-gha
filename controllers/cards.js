@@ -44,13 +44,19 @@ const likeCard = (req, res) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .then(card => res.send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(NotFound).send('404 - Карточка с таким id не найдена')
+      }
+      res.status(200).send({ date: card })
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(NotFound).send({ message: `Карточка с id:${req.params.cardId} не найдена` })
+        res.status(BadRequest).send('400 - Некорректный id')
       }
-      return res.status(InternalServerError).send({ message: 'Произошла ошибка' })
+      res.status(InternalServerError).send({ message: 'Произошла ошибка' })
     })
+
 }
 
 const dislikeCard = (req, res) => {
@@ -59,12 +65,17 @@ const dislikeCard = (req, res) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .then(card => res.send(card))
+    .then((card) => {
+      if (!card) {
+        return res.status(NotFound).send('404 - Карточка с таким id не найдена')
+      }
+      res.status(200).send({ date: card })
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
-        return res.status(NotFound).send({ message: `Карточка с id:${req.params.cardId} не найдена` })
+        res.status(BadRequest).send('400 - Некорректный id')
       }
-      return res.status(InternalServerError).send({ message: 'Произошла ошибка' })
+      res.status(InternalServerError).send({ message: 'Произошла ошибка' })
     })
 }
 
