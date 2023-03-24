@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const bodyParser = require('body-parser')
 const cardRouter = require('./routes/cards')
-const userRouter = require('./routes/users')
-
+const userRouter = require('./routes/users');
+const pageNotFoundRouter = require('./routes/pagenotfound')
 const app = express();
 const { PORT = 3000, BASE_PATH = "http://localhost" } = process.env;
 
@@ -24,8 +24,7 @@ app.use((req, res, next) => {
 
 app.use('/', userRouter)
 app.use('/', cardRouter)
-
-
+app.use('/', pageNotFoundRouter)
 
 
 app.listen(PORT, () => {
