@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const { pageNotFound } = require('../controllers/pagenotfound')
+const { pageNotFound } = require('../controllers/pagenotfound');
 
-router.patch('*', pageNotFound)
+router.use('*', pageNotFound);
 module.exports = router;
