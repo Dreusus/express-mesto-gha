@@ -2,7 +2,7 @@ const User = require('../models/user');
 const {
   BadRequest,
   NotFound,
-  InternalServerError
+  InternalServerError,
 } = require('../utils/errorcode');
 
 const getUsers = (req, res) => {
@@ -89,5 +89,5 @@ module.exports = {
   getUserById,
   createUser,
   updateProfile,
-  updateUserAvatar
+  updateUserAvatar,
 };

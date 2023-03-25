@@ -2,12 +2,12 @@ const Card = require('../models/card');
 const {
   BadRequest,
   NotFound,
-  InternalServerError
+  InternalServerError,
 } = require('../utils/errorcode');
 
 const getCards = (req, res) => {
   Card.find({})
-    .then(cards => res.send(cards))
+    .then((cards) => res.send(cards))
     .catch(() => res.status(InternalServerError).send({ message: 'Произошла ошибка' }));
 };
 
@@ -27,10 +27,10 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then(() => res.status(200).send({ message: 'Карточка удалена' }))
+    .then(() => res.status(NotFound).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(NotFound).send({ message: '404 - Карточка с указанным _id не найдена.' });
+        res.status(BadRequest).send({ message: '400 - Карточка с указанным _id не найдена.' });
       }
     });
 };
@@ -45,16 +45,15 @@ const likeCard = (req, res) => {
       if (!card) {
         return res.status(NotFound).send({ message: '404 - Передан несуществующий _id карточки' });
       }
-      res.status(200).send({ date: card });
+      return res.status(200).send({ date: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         return res.status(BadRequest).send({ message: '400 - Некорректный id' });
       }
-      res.status(InternalServerError).send({ message: 'Произошла ошибка' });
+      return res.status(InternalServerError).send({ message: 'Произошла ошибка' });
     });
-
-}
+};
 
 const dislikeCard = (req, res) => {
   Card.findByIdAndUpdate(
@@ -64,22 +63,22 @@ const dislikeCard = (req, res) => {
   )
     .then((card) => {
       if (!card) {
-        return res.status(NotFound).send({ message: '404 - Карточка с таким id не найдена' });
+        return res.status(NotFound).send({ message: '404 - Карточка с таким id  не найдена' });
       }
-      res.status(200).send({ date: card })
+      return res.status(200).send({ date: card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BadRequest).send({ message: '400 - Некорректный id' })
+        res.status(BadRequest).send({ message: '400 - Некорректный id' });
       }
       res.status(InternalServerError).send({ message: 'Произошла ошибка' });
-    })
-}
+    });
+};
 
 module.exports = {
   getCards,
   createCard,
   deleteCard,
   likeCard,
-  dislikeCard
-}
+  dislikeCard,
+};

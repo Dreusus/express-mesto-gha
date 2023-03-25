@@ -5,5 +5,5 @@ const InternalServerError = 500;
 module.exports = {
   BadRequest,
   NotFound,
-  InternalServerError
-}
+  InternalServerError,
+};
