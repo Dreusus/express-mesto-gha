@@ -27,7 +27,12 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then(() => res.status(200).send({ message: 'Карточка удалена' }))
+    .then((card) => {
+      if (!card) {
+        return res.status(NotFound).send({ message: '404 - Передан несуществующий _id карточки' });
+      }
+      return res.status(200).send('Карточка удалена');
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BadRequest).send({ message: '400 - Некорректный id' });
