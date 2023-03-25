@@ -35,8 +35,9 @@ const deleteCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BadRequest).send({ message: '400 - Некорректный id' });
+        return res.status(BadRequest).send({ message: '400 - Некорректный id' });
       }
+      return res.status(InternalServerError).send({ message: 'Произошла ошибка ' });
     });
 };
 
@@ -74,9 +75,9 @@ const dislikeCard = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BadRequest).send({ message: '400 - Некорректный id' });
+        return res.status(BadRequest).send({ message: '400 - Некорректный id' });
       }
-      res.status(InternalServerError).send({ message: 'Произошла ошибка' });
+      return res.status(InternalServerError).send({ message: 'Произошла ошибка' });
     });
 };
 

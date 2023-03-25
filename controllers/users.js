@@ -50,16 +50,16 @@ const updateProfile = (req, res) => {
     },
   )
     .then((user) => {
-      res.status(200).send({ data: user });
+      if (!user) {
+        return res.status(NotFound).send({ message: `404 Пользователь по указанному  _id - ${req.params.id} не найден` });
+      }
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BadRequest).send({ message: '400 - Переданы некорректные данные при обновлении профиля' });
       }
-      if (err.name === 'CastError') {
-        return res.status(NotFound).send({ message: '404 - Пользователь с указанным _id не найден' });
-      }
-      return res.status(InternalServerError).send({ message: 'Произошла ошибка' });
+      return res.status(InternalServerError).send({ message: 'Произошла ошибка(500)' });
     });
 };
 
@@ -68,17 +68,20 @@ const updateUserAvatar = (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     { avatar },
-    { new: true },
+    {
+      new: true,
+      runValidators: true,
+    },
   )
     .then((user) => {
-      res.status(200).send({ data: user });
+      if (!user) {
+        return res.status(NotFound).send({ message: '404 Пользователь по указанному  _id  не найден' });
+      }
+      return res.status(200).send({ data: user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return res.status(BadRequest).send({ message: '400 - Переданы некорректные данные при обновлении аватара' });
-      }
-      if (err.name === 'CastError') {
-        return res.status(NotFound).send({ message: '404 - Пользователь с указанным _id не найден' });
       }
       return res.status(InternalServerError).send({ message: 'Произошла ошибка' });
     });
