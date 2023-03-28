@@ -27,13 +27,16 @@ const createCard = (req, res, next) => {
 const deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
-        return next(new ForbiddenError('ForbiddenError'));
-      }
       if (!card) {
         return next(new NotFoundError('404 - Передан несуществующий _id карточки'));
       }
-      return res.status(200).send({ message: 'Карточка удалена' });
+      if (card.owner.toString() !== req.user._id) {
+        return next(new ForbiddenError('Вам запрещено удалять данную карточку'));
+      }
+      return Card.findByIdAndDelete(req.params.cardId)
+        .then(() => {
+          res.status(200).send({ message: 'Карточка удалена' });
+        });
     })
     .catch((err) => {
       if (err.name === 'CastError') {

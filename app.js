@@ -48,6 +48,11 @@ app.use('/', userRouter);
 app.use('/', cardRouter);
 
 app.use(errors());
+
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Такая страница не существует'));
+});
+
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
   res
@@ -58,10 +63,6 @@ app.use((err, req, res, next) => {
         : message,
     });
   next();
-});
-
-app.use((req, res, next) => {
-  next(new NotFoundError('Такая страница не существует'));
 });
 
 app.listen(PORT, () => {
