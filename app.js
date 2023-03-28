@@ -3,6 +3,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
+const cookieParser = require('cookie-parser');
 const { createUser, login } = require('./controllers/users');
 const cardRouter = require('./routes/cards');
 const userRouter = require('./routes/users');
@@ -15,7 +16,7 @@ const { PORT = 3000, BASE_PATH = 'http://localhost' } = process.env;
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   family: 4,
 });
-
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -44,14 +45,13 @@ app.post(
   login,
 );
 app.use(auth);
-app.use('/', userRouter);
-app.use('/', cardRouter);
-
-app.use(errors());
-
+app.use('/users', userRouter);
+app.use('/cards', cardRouter);
 app.use('*', (req, res, next) => {
   next(new NotFoundError('Такая страница не существует'));
 });
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
