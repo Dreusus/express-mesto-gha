@@ -20,7 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.post(
-  '/signin',
+  '/signup',
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
@@ -34,7 +34,7 @@ app.post(
 );
 
 app.post(
-  '/signup',
+  '/signin',
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
