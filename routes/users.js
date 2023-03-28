@@ -10,6 +10,7 @@ const {
 
 router.get('/users', getUsers);
 router.get('/users/me', getUser);
+
 router.get(
   '/users/:id',
   celebrate({
@@ -19,7 +20,25 @@ router.get(
   }),
   getUserById,
 );
-router.patch('/users/me', updateProfile);
-router.patch('/users/me/avatar', updateUserAvatar);
+
+router.patch(
+  '/users/me',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().required().min(2).max(30),
+      about: Joi.string().required().min(2).max(30),
+    }),
+  }),
+  updateProfile,
+);
+router.patch(
+  '/users/me/avatar',
+  celebrate({
+    body: Joi.object().keys({
+      avatar: Joi.string().required().regex(/^(https?:\/\/)([\da-z\.-]+)\.([a-z\.]{2,6})([\/\#\w \.-]*)*\/?$/),
+    }),
+  }),
+  updateUserAvatar,
+);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const Card = require('../models/card');
 const NotFoundError = require('../errors/not-found-err');
 const BadRequestError = require('../errors/bad-req-err');
+const ForbiddenError = require('../errors/forbidden-err');
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -13,7 +14,6 @@ const getCards = (req, res, next) => {
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   const owner = req.user._id;
-
   Card.create({ name, link, owner })
     .then((card) => res.send(card))
     .catch((err) => {
@@ -25,8 +25,11 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  Card.findById(req.params.cardId)
     .then((card) => {
+      if (card.owner.toString() !== req.user._id) {
+        return next(new ForbiddenError('ForbiddenError'));
+      }
       if (!card) {
         return next(new NotFoundError('404 - Передан несуществующий _id карточки'));
       }
